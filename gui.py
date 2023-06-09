@@ -168,7 +168,13 @@ class ModelFrame(ctk.CTkScrollableFrame):
 
         self.add_storey_button = ctk.CTkButton(self, text='Dodaj kondygnację',
                                                command=lambda: self.add_storey(self.storey_name.get()))
-        self.add_storey_button.grid(row=2, column=1, **self.params)
+        self.add_storey_button.grid(row=1, column=2, **self.params)
+
+        self.preview_button = ctk.CTkButton(self, text='Podgląd', fg_color='blue',
+                                            command=lambda: self.open_preview_window())
+        self.preview_button.grid(row=1, column=3, **self.params)
+
+        self.preview_window = None
 
     def add_storey(self, storey_name):
         last_row = self.grid_size()[-1]
@@ -207,6 +213,23 @@ class ModelFrame(ctk.CTkScrollableFrame):
         })
         room_name.delete(0, 'end')
         power_sockets.delete(0, 'end')
+
+    def open_preview_window(self):
+        if self.preview_window is None or not self.preview_window.winfo_exists():
+            self.preview_window = PreviewWindow(self)
+            self.preview_window.grab_set()
+        else:
+            self.preview_window.focus()
+
+
+class PreviewWindow(ctk.CTkToplevel):
+    def __init__(self, data, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.params = {'padx': 8, 'pady': 8, 'sticky': 'nsew'}
+        self.geometry("600x500")
+        self.title('Podgląd danych')
+
 
 
 class ZeroingFrame(ModelFrame):
@@ -267,40 +290,69 @@ class SettingsWindow(ctk.CTkToplevel):
         self.params = {'padx': 8, 'pady': 8, 'sticky': 'nsew'}
         self.geometry("600x500")
         self.title('Dane Firmy Wykonującej Pomiary')
+        self.wb = load_workbook(filename='strona_tytulowa.xlsx')
+        self.ws = self.wb.active
+        self.wb_number = load_workbook(filename='rejestr.xlsx')
+        self.ws_number = self.wb_number.active
+        self.register_number = self.ws_number[f'B{self.ws_number.max_row}'].value
+        self.name = self.ws['B12'].value
+        self.street_and_number = self.ws['B13'].value
+        self.zip_code_and_city = self.ws['B14'].value
+        self.measuring_tools = self.ws['B15'].value
 
         self.name_label = ctk.CTkLabel(self, text='Nazwa firmy')
         self.name_label.grid(row=0, column=0, **self.params)
 
         self.name_entry = ctk.CTkEntry(self, placeholder_text='Nazwa Firmy')
         self.name_entry.grid(row=0, column=1, columnspan=3, **self.params)
+        self.name_entry.insert(ctk.END, self.name)
 
         self.address_label = ctk.CTkLabel(self, text='Adres firmy')
         self.address_label.grid(row=1, column=0, **self.params)
 
         self.zip_code_and_city_entry = ctk.CTkEntry(self, width=200, placeholder_text='Kod pocztowy i miasto')
         self.zip_code_and_city_entry.grid(row=1, column=1, **self.params)
+        self.zip_code_and_city_entry.insert(ctk.END, self.zip_code_and_city)
 
         self.street_and_number_entry = ctk.CTkEntry(self, width=200, placeholder_text='Ulica i numer')
         self.street_and_number_entry.grid(row=1, column=2, **self.params)
+        self.street_and_number_entry.insert(ctk.END, self.street_and_number)
 
         self.measuring_tools_label = ctk.CTkLabel(self, text='Narzędzia pomiarów')
         self.measuring_tools_label.grid(row=2, column=0, **self.params)
 
         self.measuring_tools_entry = ctk.CTkEntry(self, placeholder_text='np. MIC-3 nr 345758')
         self.measuring_tools_entry.grid(row=2, column=1, **self.params, columnspan=3)
+        self.measuring_tools_entry.insert(ctk.END, self.measuring_tools)
 
-        self.register_number_label = ctk.CTkLabel(self, text='Numer rejestru')
+        self.register_number_label = ctk.CTkLabel(self, text='Aktualny numer rejestru')
         self.register_number_label.grid(row=3, column=0, **self.params)
 
-        self.register_number_entry = ctk.CTkEntry(self, placeholder_text='np. 25')
+        self.register_number_entry = ctk.CTkEntry(self)
         self.register_number_entry.grid(row=3, column=1, **self.params)
+        self.register_number_entry.insert(ctk.END, ('' if self.register_number == 'Numer' else self.register_number))
 
-        self.set_and_save_button = ctk.CTkButton(self, text='Zapisz i zastosuj', command=self.save_data)
+        self.set_and_save_button = ctk.CTkButton(self, text='Zapisz dane', command=self.save_data)
         self.set_and_save_button.grid(row=4, column=2, **self.params)
 
     def save_data(self):
+        list_file = ['izo.xlsx', 'odgromy.xlsx', 'roznicowka.xlsx', 'zerowanie.xlsx']
+        for file in list_file:
+            wb = load_workbook(filename=file)
+            ws = wb.active
+            ws['A2'] = self.name_entry.get()
+            wb.save(file)
 
-        pass
+        self.ws['B12'] = self.name_entry.get()
+        self.ws['B13'] = self.street_and_number_entry.get()
+        self.ws['B14'] = self.zip_code_and_city_entry.get()
+        self.ws['B15'] = self.measuring_tools_entry.get()
+        self.wb.save('strona_tytulowa.xlsx')
+
+        self.ws_number[f'B{self.ws_number.max_row + 1}'] = self.register_number_entry.get()
+
+        self.wb_number.save('rejestr.xlsx')
+        self.destroy()
 
 
 class App(ctk.CTk):
