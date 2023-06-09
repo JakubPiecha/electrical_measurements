@@ -1,8 +1,8 @@
-from openpyxl import load_workbook, Workbook
+from openpyxl import load_workbook
 
 dom = {
     'investment address': '43-190 Mikołów, ul. Jasna 142A',
-    'investors': 'Jakub Pie',
+    'investor': 'Jakub Pie',
     'number of floors': {
         'Piwnica': {
             'pom1': 1,
@@ -28,21 +28,39 @@ dom = {
 
 
 def zeroing(dicts):
-    wb = load_workbook(filename='zerowanie.xlsx')
+    wb = load_workbook(filename='odgromy.xlsx')
     ws = wb.active
+
+    print(ws['F11'].value)
+    print(ws['H11'].value)
+
     ws['A7'] = dicts['investment address']
+
     row = 10
     column_c = 'C'
+
     for name, floors in dicts['number of floors'].items():
         ws[f'{column_c + str(row)}'] = name
         row += 1
+
         for room, number in floors.items():
             ws[f'{column_c + str(row)}'] = room
             row += 1
+
             for ps in range(1, number + 1):
                 ws[f'{column_c + str(row)}'] = f'Gniazdo jednofazowe A/Z 230V nr {ps}'
                 row += 1
-    wb.save(f'zerowanie_{"_".join((dicts["investors"]).split())}.xlsx')
+
+    # wb.save(f'zerowanie_{"_".join((dicts["investor"]).split())}.xlsx')
 
 
 zeroing(dom)
+
+
+def remove_special_char():
+    special_char = list('\/[]:¦<>+=;,*?"')
+
+
+
+remove_special_char()
+
