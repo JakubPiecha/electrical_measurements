@@ -82,6 +82,7 @@ class SettingsWindow(ctk.CTkToplevel):
 
         wb = load_workbook(filename='strona_tytulowa.xlsx')
         ws = wb.active
+        ws['B12'] = self.config.get('contractor_details', 'name')
         ws['B13'] = self.config.get('contractor_details', 'street_and_number')
         ws['B14'] = self.config.get('contractor_details', 'zip_code_and_city')
         ws['B15'] = self.config.get('contractor_details', 'measuring_tools')

@@ -3,6 +3,9 @@
 **/*.pyc
 
 venv
+main.spec
+build
+dist
 
 
 
