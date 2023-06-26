@@ -205,8 +205,6 @@ class ElectricalMeasurementsGenerate:
         ws.print_area = f'A1:H{row}'
         self.save_file(filename, wb)
 
-
-
     def add_name(self, ws):
         ws['A7'] = f'{self.measurement_data["investment_zip_code"]} {self.measurement_data["investment_city"]},' \
                    f' {self.measurement_data["investment_street_and_number"]} -' \

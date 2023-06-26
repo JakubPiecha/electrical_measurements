@@ -2,11 +2,9 @@ import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from tkcalendar import DateEntry
 
-from file_generate.electrical_measurements_generate import ElectricalMeasurementsGenerate
-from settings_window.settings_window import SettingsWindow
-from frames.zeroing_frame import ZeroingFrame
-from frames.differential_frame import DifferentialFrame
-from frames.reflexes_frame import ReflexesFrame
+from file_generate import ElectricalMeasurementsGenerate
+from settings_window import SettingsWindow
+from frames import ZeroingFrame, DifferentialFrame, ReflexesFrame
 
 
 class MainFrame(ctk.CTkScrollableFrame):
@@ -130,18 +128,18 @@ class MainFrame(ctk.CTkScrollableFrame):
         obj.update(self.differential_frame.building_diagram)
         obj.update(self.reflexes_frame.reflexes_data)
 
+        call_dict = {
+            self.front_page.get(): self.generator_object.print_front_page,
+            self.differential.get(): self.generator_object.differential,
+            self.zeroing.get(): self.generator_object.zeroing,
+            self.insulation.get(): self.generator_object.insulation,
+            self.reflexes.get(): self.generator_object.reflexes
+        }
         option = self.generator_object.create_directory()
-        if option:
-            call_dict = {
-                self.front_page.get(): self.generator_object.print_front_page,
-                self.differential.get(): self.generator_object.differential,
-                self.zeroing.get(): self.generator_object.zeroing,
-                self.insulation.get(): self.generator_object.insulation,
-                self.reflexes.get(): self.generator_object.reflexes
-            }
 
+        if option:
             for key in call_dict.keys():
                 if key:
                     call_dict[key]()
 
-        CTkMessagebox(message='Generowanie plików zostało zakończone', icon='check', option_1='OK')
+            CTkMessagebox(message='Generowanie plików zostało zakończone', icon='check', option_1='OK')

@@ -5,9 +5,6 @@ class PreviewFrame(ctk.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.params = {'padx': 5, 'pady': 5, 'sticky': 'nsew'}
-        self.In_option = None
-        self.protection_type_option = None
-        self.type_of_security_option = None
         self.data = None
 
     def view_data(self, data):
@@ -28,9 +25,6 @@ class PreviewFrame(ctk.CTkScrollableFrame):
     def show_storey(self, row, storey_name):
         storey = ctk.CTkLabel(self, text=storey_name.upper(), font=('Helvetica', 18, 'bold'))
         storey.grid(row=row, column=0, columnspan=5, **self.params)
-        delete_button = ctk.CTkButton(self, text='Usuń', width=50, fg_color='red',
-                                      command=lambda: self.delete_storey(storey_name, row))
-        delete_button.grid(row=row, column=6, **self.params)
 
     def show_room_data(self, row, storey_name, room, room_data):
         room_name = ctk.CTkLabel(self, width=120, text=room.upper(), font=('Helvetica', 18, 'bold'))
@@ -52,12 +46,6 @@ class PreviewFrame(ctk.CTkScrollableFrame):
                                            command=lambda: self.delete_room(storey_name, room, row))
         delete_button_room.grid(row=row, column=6, **self.params)
 
-    def delete_storey(self, storey_name, row):
-        key = list(self.data.keys())[0]
-        for i in range(len(self.data[key][storey_name]) + 1):
-            self.delete_row(row + i)
-        self.data[key].pop(storey_name)
-
     def delete_row(self, row):
         slaves = list(self.grid_slaves(row=row))
         for obj in slaves:
@@ -66,4 +54,4 @@ class PreviewFrame(ctk.CTkScrollableFrame):
     def delete_room(self, storey_name, room, row):
         key = list(self.data.keys())[0]
         self.delete_row(row)
-        self.data[f'{key}'][storey_name][room] = None
+        self.data[f'{key}'][storey_name].pop(room)

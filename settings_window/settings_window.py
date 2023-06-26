@@ -20,7 +20,9 @@ class SettingsWindow(ctk.CTkToplevel):
 
         self.wb_number = load_workbook(filename='rejestr.xlsx')
         self.ws_number = self.wb_number.active
-        self.register_number = self.ws_number[f'B{self.ws_number.max_row}'].value
+        self.register_number = self.ws_number[f'B{self.ws_number.max_row}'].value\
+            if self.ws_number[f'B{self.ws_number.max_row}'].value is not None else ''
+        print(self.register_number)
 
         self.name_label = ctk.CTkLabel(self, text='Nazwa firmy')
         self.name_label.grid(row=0, column=0, **self.params)
