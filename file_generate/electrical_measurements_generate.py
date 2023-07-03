@@ -29,33 +29,39 @@ class ElectricalMeasurementsGenerate:
         objects_adres = self.remove_special_char(
             "_".join(self.measurement_data['investment_street_and_number'].split()))
         year = self.measurement_data['date'].split('.')[-1]
-        directory = f'{investors_name}_{objects_name}_{objects_adres}'
+        directory_objects = f'{objects_name}_{objects_adres}'
         config = configparser.ConfigParser()
         config.read('config.ini')
         self.path = config.get('path', 'path')
 
         if os.path.isdir(os.path.join(self.path, year)):
-            self.path = os.path.join(self.path, year, directory)
+            if os.path.isdir(os.path.join(self.path, year, investors_name)):
+                self.path = os.path.join(self.path, year, investors_name, directory_objects)
 
-            if os.path.isdir(self.path):
-                confirm_box = CTkMessagebox(title='UWAGA',
-                                            message='Katalog już istnieje!! '
-                                                    'Kontynuacja może spowodować nadpisanie danych!!! '
-                                                    'Czy chcesz kontynuować?',
-                                            icon='question', option_1='Tak', option_2='Nie')
-                if confirm_box.get() == 'Nie':
-                    return False
+                if os.path.isdir(self.path):
+                    confirm_box = CTkMessagebox(title='UWAGA',
+                                                message='Katalog już istnieje!! '
+                                                        'Kontynuacja może spowodować nadpisanie danych!!! '
+                                                        'Czy chcesz kontynuować?',
+                                                icon='question', option_1='Tak', option_2='Nie')
+                    if confirm_box.get() == 'Nie':
+                        return False
+                else:
+                    os.mkdir(self.path)
             else:
+                os.mkdir(os.path.join(self.path, year, investors_name))
+                self.path = os.path.join(self.path, year, investors_name, directory_objects)
                 os.mkdir(self.path)
         else:
             os.mkdir(os.path.join(self.path, year))
-            self.path = os.path.join(self.path, year, directory)
+            os.mkdir(os.path.join(self.path, year, investors_name))
+            self.path = os.path.join(self.path, year, investors_name, directory_objects)
             os.mkdir(self.path)
 
         return True
 
     def save_file(self, filename, file):
-        savefile = f'{filename.split(".")[0]}_{"_".join((self.measurement_data["investment_name"]).split())}.xlsx'
+        savefile = f'{filename.split(".")[0]}_{"_".join((self.measurement_data["date"]).split("."))}.xlsx'
         file.save(os.path.join(self.path, savefile))
 
     def insert_column(self, wb, filename):

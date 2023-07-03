@@ -1,10 +1,23 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from tkcalendar import DateEntry
-
 from file_generate import ElectricalMeasurementsGenerate
 from settings_window import SettingsWindow
-from frames import ZeroingFrame, DifferentialFrame, ReflexesFrame
+from secondary_frame import ShockProtection, ReflexesFrame
+
+measurement_parameters = {
+    'differential': {
+        'name': 'Differential',
+        'type_of_security': ['P302', 'P304'],
+        'protection_type': ['AC', 'A', 'AC-s', 'A-s'],
+        'In': ['0.03', '0.006', '0.01', '0.1']
+    },
+    'zeroing': {
+        'name': 'Zeroing',
+        'type_of_security': ['S301', 'S303', 'S191', 'S193', 'WT', 'BM'],
+        'protection_type': ['B', 'A', 'C', 'D', 'F', 'gG'],
+        'In': ['16', '2', '4', '6', '10', '20', '25', '32', '40', '50', '63', '80', '100', '125', '160', '315', '400'],
+    }}
 
 
 class MainFrame(ctk.CTkScrollableFrame):
@@ -80,11 +93,14 @@ class MainFrame(ctk.CTkScrollableFrame):
         self.generate_button = ctk.CTkButton(self, text='Generuj pliki', command=self.generate)
         self.generate_button.grid(row=9, column=5, padx=10, pady=15, sticky='w')
 
-        self.zeroing_frame = ZeroingFrame(master=self, height=200, width=1150, corner_radius=10, fg_color="gray20",
-                                          label_text='Zerowanie', label_anchor='center')
+        self.zeroing_frame = ShockProtection(measurement_parameters=measurement_parameters['zeroing'], master=self,
+                                             height=200, width=1150, corner_radius=10, fg_color="gray20",
+                                             label_text='Zerowanie', label_anchor='center')
 
-        self.differential_frame = DifferentialFrame(master=self, width=1150, height=200, corner_radius=10,
-                                                    fg_color="gray20", label_text='Różnicówka', label_anchor='center')
+        self.differential_frame = ShockProtection(measurement_parameters=measurement_parameters['differential'],
+                                                  master=self, width=1150, height=200, corner_radius=10,
+                                                  fg_color="gray20", label_text='Różnicówka', label_anchor='center')
+
 
         self.reflexes_frame = ReflexesFrame(master=self, corner_radius=10, fg_color="gray20")
 

@@ -1,2 +1,1 @@
 from preview_window.preview_window import PreviewWindow
-from preview_window.preview_frame import PreviewFrame

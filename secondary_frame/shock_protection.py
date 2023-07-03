@@ -4,15 +4,15 @@ from collections import defaultdict
 from preview_window import PreviewWindow
 
 
-class ModelFrame(ctk.CTkScrollableFrame):
-    def __init__(self, master, **kwargs):
+class ShockProtection(ctk.CTkScrollableFrame):
+    def __init__(self, master, measurement_parameters, **kwargs):
         super().__init__(master, **kwargs)
         self.master = master
         self.params = {'padx': 5, 'pady': 5, 'sticky': 'nsew'}
-        self.name = ''
-        self.type_of_security = []
-        self.protection_type = []
-        self.In = []
+        self.name = measurement_parameters['name']
+        self.type_of_security = measurement_parameters['type_of_security']
+        self.protection_type = measurement_parameters['protection_type']
+        self.In = measurement_parameters['In']
         self.building_diagram = {self.name: defaultdict(defaultdict)}
         self.floors_data = self.building_diagram[self.name]
 
