@@ -1,4 +1,4 @@
-An application for generating electrical measurement results in Excel
+"The 'ElectroTemplate Creator' application is designed for professionals involved in electrical measurements. It enables quick and easy customization of spreadsheet templates in Microsoft Excel, tailored for documenting and analyzing electrical measurements. The application leverages the Python library called 'openpyxl' to generate Excel-format spreadsheets. The application utilizes 'customtkinter,' allowing users to tailor the user interface to their preferences and requirements.
 # Electrical measurements
 
 Electrical measurements is an application for creating a measurement template that only needs to be filled 
